@@ -1,0 +1,30 @@
+name: Build and Test Dockerized Node.js App
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: docker build -t node-docker-app .
+
+      - name: Run Docker container
+        run: docker run -d -p 3000:3000 --name myapp node-docker-app
+
+      - name: Test app is running
+        run: |
+          sleep 3  # give it time to start
+          curl --fail http://localhost:3000
